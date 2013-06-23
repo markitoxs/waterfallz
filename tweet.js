@@ -16,8 +16,8 @@ app.get('/', function (req, res) {
 });
 
 
-app.get('/functions.js', function (req, res) {
-  res.sendfile(__dirname + '/functions.js');
+app.get('/client.js', function (req, res) {
+  res.sendfile(__dirname + '/client.js');
 });
 
 io.sockets.on('connection', function (socket) {

@@ -1,8 +1,4 @@
 
-var div  = $('#tweet div');
-var inp  = $('#tweet input');
-var form = $('#tweet form');
-
 var print = function(m, p) {
 	p = (p === undefined) ? '' : JSON.stringify(p);
 	//div.prepend($("<code>").text(m + ' ' + p));
@@ -20,7 +16,7 @@ function changebox(data){
 	if (data == null ) {
 		data = "aeiou";
 	}
-
+  $('#tweet').text(data);
   if (data.match(/a/gi)) {
     as = data.match(/a/gi).length;
   }
@@ -62,6 +58,6 @@ function changebox(data){
 var socket = io.connect('http://localhost');
   socket.on('new_tweet', function (data) {
     changebox(data);
-    console.log(data);
-    socket.emit('reply', "ACK");
+    //console.log(data);
+    //socket.emit('reply', "ACK");
   });

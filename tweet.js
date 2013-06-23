@@ -1,11 +1,11 @@
-var http = require('http');
-var sockjs = require('sockjs');
-var node_static = require('node-static');
 var twitter = require('ntwitter');
 
 var app = require('express')()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
+
+//Remove debug messages 
+io.set('log level',1);
 
 var tools = require('./credentials');
 
@@ -23,14 +23,14 @@ app.get('/functions.js', function (req, res) {
 io.sockets.on('connection', function (socket) {
   tools.fetch_tweets(socket);
 	//socket.emit('new_tweet', "aeiou");
-  socket.on('reply', function (data) {
-    console.log("Reply received:" + data);
+  socket.on('reply', function (stream) {
+    console.log("Attempting to kill the stream");
+    // kill_stream(stream);
   });
 });
 
  
-function kill_stream() {
-	stream.destroy;
-	console.log('Closing stream');
+function kill_stream(stream) {
+	stream.destroy(function (){console.log('Stream closed');});
 }
 

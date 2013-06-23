@@ -21,7 +21,7 @@ app.get('/client.js', function (req, res) {
 });
 
 io.sockets.on('connection', function (socket) {
-  tools.fetch_tweets(io);
+  tools.fetch_tweets(socket);
 
   //socket.emit('new_tweet', "aeiou");
   socket.on('reply', function (data) {

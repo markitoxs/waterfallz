@@ -9,10 +9,10 @@ function changebox(data){
   counter_value = counter_value + 1;
  
   //Find a smart way to decide on HEX color code 
-  color=get_random_color(); 
+  color=stringToColour(data);
   var boxcode='<div id="square" style="background-color:'+color+'"></div>'
   $('#line').prepend(boxcode);
-  $('#tweet').text(data); 
+//  $('#tweet').text(data); 
   $('#counter').text(counter_value);
   }
 
@@ -31,5 +31,14 @@ function get_random_color() {
     color += letters[Math.round(Math.random() * 15)];
   }
   return color;
+}
+var stringToColour = function(str) {
+  // str to hash
+  for (var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++) + ((hash << 5) - hash));
+
+  // int/hash to hex
+  for (var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF).toString(16)).slice(-2));
+
+  return colour;
 }
 

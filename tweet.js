@@ -21,7 +21,7 @@ app.get('/client.js', function (req, res) {
 });
 
 io.sockets.on('connection', function (socket) {
-  tools.fetch_tweets(socket);
+  tools.fetch_tweets(io);
 	//socket.emit('new_tweet', "aeiou");
   socket.on('reply', function (stream) {
     console.log("Attempting to kill the stream");

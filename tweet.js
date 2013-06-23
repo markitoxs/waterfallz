@@ -28,28 +28,6 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-
-
-
-
-function fetch_tweets(socket){
-
-	var twit = new twitter({
-		consumer_key: 'dppTDWuwj8ZIQluh4HIQ',
-		consumer_secret: 'Vds1HvRCDitDhzG2EOYWKMhwt80ItIGrCGttYnWfwBw',
-		access_token_key: '237047644-qKdti7ZbNN9qa6UAzaQPw4fyMHQcLezsb9kPd0w5',
-		access_token_secret: 'nnJ4Glc8i8MYEzDS4ptHoJTXgeMtaTuDc6P4uXL3g'
-	});
-
-	console.log("Request for tweets. ");
-  twit.stream('statuses/sample', function(stream) {
-		stream.on('data', function (data) {
-			//conn.write(data.text);
-			socket.emit('new_tweet',data.text);
-      //setTimeout(kill_stream(), 150000);
-    });
-  });
-}
  
 function kill_stream() {
 	stream.destroy;

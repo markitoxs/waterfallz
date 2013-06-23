@@ -4,7 +4,7 @@ var print = function(m, p) {
 };
 
 function changebox(data){
-  console.log($('#counter').text());
+//  console.log($('#counter').text());
   var counter_value = parseInt($('#counter').text());
   counter_value = counter_value + 1;
  
@@ -21,7 +21,7 @@ var socket = io.connect('http://localhost');
   socket.on('new_tweet', function (data) {
     changebox(data);
     //console.log(data);
-    //socket.emit('reply', "ACK");
+    socket.emit('reply', $('#counter').text());
   });
 
 function get_random_color() {

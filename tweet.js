@@ -22,15 +22,17 @@ app.get('/client.js', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
   tools.fetch_tweets(io);
-	//socket.emit('new_tweet', "aeiou");
-  socket.on('reply', function (stream) {
-    console.log("Attempting to kill the stream");
-    // kill_stream(stream);
+
+  //socket.emit('new_tweet', "aeiou");
+  socket.on('reply', function (data) {
+    console.log("Attempting to kill the stream"+data);
+    kill_stream();
   });
 });
 
+
  
-function kill_stream(stream) {
-	stream.destroy(function (){console.log('Stream closed');});
+function kill_stream() {
+console.log("Tried to close stream");
 }
 

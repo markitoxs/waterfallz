@@ -51,7 +51,18 @@ function fetch_tweets(io) {
     twit.currentStream = stream;
     stream.on('data', function (data) {
       //conn.write(data.text);
-      io.sockets.emit('new_tweet',data.text);
+			io.sockets.emit('new_tweet',stringToColour(data.text));
     }); 
   }); 
+}
+
+
+var stringToColour = function(str) {
+  // str to hash
+  for (var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++) + ((hash << 5) - hash));
+
+  // int/hash to hex
+  for (var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF).toString(16)).slice(-2));
+
+  return colour;
 }

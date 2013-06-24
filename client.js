@@ -17,7 +17,7 @@ function changebox(data){
   }
 
 
-var socket = io.connect('http://localhost');
+var socket = io.connect('http://192.168.98.30');
   socket.on('new_tweet', function (data) {
     changebox(data);
     //console.log(data);

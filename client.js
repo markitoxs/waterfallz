@@ -9,8 +9,8 @@ function changebox(data){
   $('#counter').text(counter_value);
 }
 
-
-var socket = io.connect('http://192.168.98.30');
+window
+var socket = io.connect('http://'+window.location.host.split(':')[0]);
 socket.on('new_tweet', function (data) {
 	changebox(data);
 	//console.log(data);

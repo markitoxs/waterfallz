@@ -1,5 +1,7 @@
 (function() {
 
+  var buffer = new Array();
+
   var app = require('express')()
     , server = require('http').createServer(app)
     , io = require('socket.io').listen(server);
@@ -10,6 +12,10 @@
 
   server.listen(9999);
 
+  //////////////////////////////////////
+  // Handlers for serving static files
+  //////////////////////////////////////
+  
   app.get('/', function (req, res) {
     res.sendfile(__dirname + '/index.html');
   });
@@ -19,26 +25,25 @@
     res.sendfile(__dirname + '/client.js');
   });
 
+  ///////////////////////////////////////
+  // What to do on different socket events
+  ////////////////////////////////////////
+  
   io.sockets.on('connection', function (socket) {
+    //On new connection will start the stream
     fetch_tweets(io);
 
-    //socket.emit('new_tweet', "aeiou");
-    socket.on('reply', function (data) {
-      console.log("Evaluating:"+data);
-      if ( data == 1000){
-        kill_stream();
-      }
+    //On consume will consume the array
+    socket.on('consume', function () {
+      console.log("Received Request for image");
+      consume_array();
     });
   });
 
-
-   
-  function kill_stream() {
-  console.log("Trying to close stream");
-  stream.destroy();
-  }
-
-
+  //////////////////////////////////////////
+  // function that initializes the stream
+  // and adds the value to the array
+  //////////////////////////////////////////
 
   function fetch_tweets(io) {
     var twitter = require('ntwitter');
@@ -50,31 +55,27 @@
       access_token_secret: config.access_token_secret
     }); 
 
-    console.log("Request for tweets. ");
+    console.log("Start stream of tweets.");
     twit.stream('statuses/sample', function(s) {
       stream = s;
       stream.on('data', function (data) {
-        //conn.write(data.text);
-  			//io.sockets.emit('new_tweet',stringToColour(data.text));
-        console.log("NEW DATA");
-        io.sockets.emit('new_data',data.user.profile_image_url);
+        //console.log("NEW DATA: "+data.user.profile_image_url);
+        buffer.push(data.user.profile_image_url);
+        console.log(buffer.length);
       }); 
     }); 
   }
 
-
-  var stringToColour = function(str) {
-    if (str){
-      // str to hash
-      for (var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++) + ((hash << 5) - hash));
-
-      // int/hash to hex
-      for (var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF).toString(16)).slice(-2));
+  ////////////////////////////////////////////
+  // Function that will grab an emit top
+  // value from the array
+  ////////////////////////////////////////////
+  
+  function consume_array() {
+    if ( buffer[0] != null ){
+      io.sockets.emit('new_data',buffer[0]);
+      buffer.shift();
     }
-    else {
-      colour="#00FF00"
-    }
-    return colour;
   }
   
 })();

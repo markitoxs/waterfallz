@@ -1,14 +1,48 @@
+///////////////////////////////////
+// Open a connection on page load
+///////////////////////////////////
+
+var socket = io.connect('http://'+window.location.host.split(':')[0]);
+
+setInterval(consume,400);
+
+///////////////////////////////////
+// What to do on new_tweet event
+///////////////////////////////////
+
+socket.on('new_tweet', function (data) {
+	changebox(data);
+	socket.emit('reply', $('#counter').text());
+});
+
+///////////////////////////////////
+// What to do on new_data
+///////////////////////////////////
+
+socket.on('new_data', function (data) {
+  console.log(data);
+  preload_image(data);
+});
+
+
+//////////////////////////////////
+// How to add a new box with image
+//////////////////////////////////
+
 function changeicon(url){
   console.log("Image loaded, updating DOM");
   var counter_value = parseInt($('#counter').text());
   counter_value = counter_value +1;
   link=url;
-  var boxcode='<div id="square"><img src="'+link+'"></img>'
-  $('#line').prepend(boxcode);
+  var boxcode='<div id="square" style="background-color:white"><img src="'+link+'"></img>'
+  $('#line').prepend(boxcode).fadeIn(slow);
   $('#counter').text(counter_value);
 
-  socket.emit('reply', $('#counter').text());
 }
+
+//////////////////////////////////
+// How to prefetch the image
+//////////////////////////////////
 
 function preload_image(url){
   console.log("Prefetching Image"); 
@@ -18,25 +52,12 @@ function preload_image(url){
 
 }
 
-function changebox(data){
-  var counter_value = parseInt($('#counter').text());
-  counter_value = counter_value + 1;
- 
-  color=data;
-  var boxcode='<div id="square" style="background-color:'+color+'"></div>'
-  $('#line').prepend(boxcode);
-  $('#counter').text(counter_value);
+///////////////////////////////////
+// How to request a new image
+///////////////////////////////////
+
+function consume(){
+  console.log("requesting image to server");
+  socket.emit('consume');
 }
 
-var socket = io.connect('http://'+window.location.host.split(':')[0]);
-socket.on('new_tweet', function (data) {
-	changebox(data);
-	//console.log(data);
-	socket.emit('reply', $('#counter').text());
-});
-
-socket.on('new_data', function (data) {
-  console.log(data);
-  preload_image(data);
-  //socket.emit('reply', $('#counter').text());
-});

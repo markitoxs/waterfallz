@@ -34,8 +34,9 @@ function changeicon(url){
   var counter_value = parseInt($('#counter').text());
   counter_value = counter_value +1;
   link=url;
-  var boxcode='<div id="square" style="background-color:white"><img src="'+link+'"></img>'
-  $('#line').prepend(boxcode).fadeIn(slow);
+  selector='.id'+counter_value;
+  var boxcode='<div id="square" class="id'+counter_value+'" style="background-color:white"><img src="'+link+'" onload="$('+selector+').fadeIn(2000);"></img>';
+  $('#line').prepend(boxcode);
   $('#counter').text(counter_value);
 
 }

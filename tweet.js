@@ -19,6 +19,11 @@
     res.sendfile(__dirname + '/client.js');
   });
 
+
+  app.get('/functions.js', function (req, res) {
+    res.sendfile(__dirname + '/functions.js');
+  });
+
   io.sockets.on('connection', function (socket) {
     fetch_tweets(io);
 
@@ -55,7 +60,7 @@
       stream = s;
       stream.on('data', function (data) {
         //conn.write(data.text);
-  			io.sockets.emit('new_tweet',stringToColour(data.text));
+  			io.sockets.emit('new_tweet',data.text);
 
       }); 
     }); 

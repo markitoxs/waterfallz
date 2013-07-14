@@ -55,8 +55,9 @@
       stream = s;
       stream.on('data', function (data) {
         //conn.write(data.text);
-  			io.sockets.emit('new_tweet',stringToColour(data.text));
-
+  			//io.sockets.emit('new_tweet',stringToColour(data.text));
+        console.log("NEW DATA");
+        io.sockets.emit('new_data',data.user.profile_image_url);
       }); 
     }); 
   }

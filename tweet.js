@@ -6,7 +6,7 @@
     , server = require('http').createServer(app)
     , io = require('socket.io').listen(server);
   var stream;
-
+	var clients = 0;
   //Remove debug messages 
   io.set('log level',1);
 
@@ -31,7 +31,27 @@
   
   io.sockets.on('connection', function (socket) {
     //On new connection will start the stream
-    fetch_tweets(io);
+    if ( clients == 0 ) {
+			fetch_tweets(io);
+			clients = clients + 1 ;
+			console.log("First client connected");
+    }
+		else {
+			clients = clients +1;
+			console.log ("Another client connected");
+			console.log ("Total clients: "+clients);
+		}
+   
+		//On disconnect
+		socket.on('disconnect', function () {
+			clients = clients -1 ;
+			console.log ("Client disconnected");
+			console.log ("Total clients: "+clients);
+			if ( clients == 0 ) {
+				console.log ("No more clients, killing the stream");
+				stream.destroy();
+			}
+    });
 
     //On consume will consume the array
     socket.on('consume', function () {

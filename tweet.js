@@ -35,7 +35,7 @@
 
     //On consume will consume the array
     socket.on('consume', function () {
-      console.log("Received Request for image");
+      //console.log("Received Request for image");
       consume_array();
     });
   });
@@ -59,9 +59,11 @@
     twit.stream('statuses/sample', function(s) {
       stream = s;
       stream.on('data', function (data) {
-        //console.log("NEW DATA: "+data.user.profile_image_url);
-        buffer.push(data.user.profile_image_url);
-        console.log(buffer.length);
+        // Check if data.user is not undefined
+        if ( data.user ) {
+          buffer.push(data.user.profile_image_url);
+        }
+        //console.log(buffer.length);
       }); 
     }); 
   }

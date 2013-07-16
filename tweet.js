@@ -76,14 +76,17 @@
     }); 
 
     console.log("Start stream of tweets.");
-    twit.stream('statuses/sample', function(s) {
+    //twit.stream('statuses/filter', { 'locations':'-122.75,36.8,-121.75,37.8'}, function(s) {
+    //twit.stream('statuses/filter', { 'locations':'55.90,-3.35,55.99,-3.00'}, function(s) {
+    twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
       stream = s;
       stream.on('data', function (data) {
         // Check if data.user is not undefined
-        if ( data.user ) {
-          buffer.push(data.user.profile_image_url);
-        }
+        if ( data.coordinates != null ) {
+          buffer.push(data.coordinates.coordinates);
+          console.log(data.coordinates.coordinates);
         //console.log(buffer.length);
+        }
       }); 
     }); 
   }

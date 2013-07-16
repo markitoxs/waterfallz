@@ -25,6 +25,13 @@
     res.sendfile(__dirname + '/client.js');
   });
 
+  app.get('/paper.js', function (req, res) {
+    res.sendfile(__dirname + '/paper.js');
+  });
+
+  app.get('/paper', function (req, res) {
+    res.sendfile(__dirname + '/paper.html');
+  });
   ///////////////////////////////////////
   // What to do on different socket events
   ////////////////////////////////////////
@@ -75,16 +82,15 @@
       access_token_secret: config.access_token_secret
     }); 
 
-    console.log("Start stream of tweets.");
-    //twit.stream('statuses/filter', { 'locations':'-122.75,36.8,-121.75,37.8'}, function(s) {
-    //twit.stream('statuses/filter', { 'locations':'55.90,-3.35,55.99,-3.00'}, function(s) {
-    twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
+    twit.stream('statuses/filter', { 'locations':'-3.414001,55.882629,-3.017120,56.002605'}, function(s) {
+    //twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
       stream = s;
       stream.on('data', function (data) {
         // Check if data.user is not undefined
         if ( data.coordinates != null ) {
           buffer.push(data.coordinates.coordinates);
           console.log(data.coordinates.coordinates);
+					io.sockets.emit('new_data', data.coordinates.coordinates);
         //console.log(buffer.length);
         }
       }); 

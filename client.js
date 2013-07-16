@@ -4,7 +4,8 @@
 
 var socket = io.connect('http://'+window.location.host.split(':')[0]);
 
-setInterval(consume,400);
+
+//setInterval(consume,400);
 
 ///////////////////////////////////
 // What to do on new_tweet event
@@ -21,7 +22,7 @@ socket.on('new_tweet', function (data) {
 
 socket.on('new_data', function (data) {
   console.log(data);
-  preload_image(data);
+  geolocate(data);
 });
 
 
@@ -63,3 +64,15 @@ function consume(){
   socket.emit('consume');
 }
 
+///////////////////////////////////
+// Handle the coordinates
+//////////////////////////////////
+
+function geolocate(){
+  var path = new Path.Circle({
+    center: view.center,
+    radius: 30,
+    strokeColor: 'black'
+  });
+
+}

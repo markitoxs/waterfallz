@@ -4,6 +4,20 @@
 
 var socket = io.connect('http://'+window.location.host.split(':')[0]);
 
+///////////////////////////
+// Start with paperjs
+//////////////////////////
+paper.install(window);
+var moveme;
+
+window.onload = function() {
+  // Setup directly from canvas id:
+  paper.setup('myCanvas');
+  var myCircle = new Path.Circle(new Point(100, 70), 50);
+  myCircle.fillColor = 'black';
+  myCircle.position = view.center;
+  moveme = myCircle;
+}
 
 //setInterval(consume,400);
 
@@ -68,11 +82,9 @@ function consume(){
 // Handle the coordinates
 //////////////////////////////////
 
-function geolocate(){
-  var path = new Path.Circle({
-    center: view.center,
-    radius: 30,
-    strokeColor: 'black'
-  });
-
+function geolocate(points){
+  x = Maths.abs(points[0] * 25);
+  y = Maths.abs(points[1] * 1); 
+	
+  moveme.position = new Point(x,y);
 }

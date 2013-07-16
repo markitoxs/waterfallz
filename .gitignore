@@ -1,9 +1,9 @@
 config.json
 node_modules/
 package.json
-	paper-core.js
-	paper-core.min.js
-	paper-full.js
-	paper-full.min.js
-	paper.html
+paper-core.js
+paper-core.min.js
+paper-full.js
+paper-full.min.js
+paper.html
 

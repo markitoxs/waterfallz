@@ -29,9 +29,34 @@
     res.sendfile(__dirname + '/paper.js');
   });
 
+  app.get('/us-states.json', function (req, res) {
+    res.sendfile(__dirname + '/us-states.json');
+  });
+
+  app.get('/project', function (req, res) {
+    res.sendfile(__dirname + '/project.html');
+  });
+
+  app.get('/d3.v3.js', function (req, res) {
+    res.sendfile(__dirname + '/d3.v3.js');
+  });
+
+  app.get('/cali.json', function (req, res){
+    res.sendfile(__dirname + '/cali.json');
+  });
+ 
+  app.get('/world-110m.json', function (req, res){
+    res.sendfile(__dirname + '/world-110m.json');
+  }); 
+
+  app.get('/world-110m2.json', function (req, res){
+    res.sendfile(__dirname + '/world-110m2.json');
+  }); 
+
   app.get('/paper', function (req, res) {
     res.sendfile(__dirname + '/paper.html');
   });
+
   ///////////////////////////////////////
   // What to do on different socket events
   ////////////////////////////////////////
@@ -82,8 +107,17 @@
       access_token_secret: config.access_token_secret
     }); 
 
-    twit.stream('statuses/filter', { 'locations':'-3.414001,55.882629,-3.017120,56.002605'}, function(s) {
+    //Filter by region 
+    // Edinburgh
+    // twit.stream('statuses/filter', { 'locations':'-3.414001,55.882629,-3.017120,56.002605'}, function(s) {
+   
+    // Santa Cruz
+    //twit.stream('statuses/filter', { 'locations':'-122.07,36.9420,-121.91,37.05'}, function(s) {
+    //Santa Cruz geobox  -122.07,36.9420,-121.91,37.05 
+    // The whole world
     //twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
+    //California
+    twit.stream('statuses/filter', { 'locations':'-124.148941,30.902225,-115.62355,41.95132'}, function(s) {
       stream = s;
       stream.on('data', function (data) {
         // Check if data.user is not undefined

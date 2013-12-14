@@ -1,24 +1,15 @@
-///////////////////////////////////
+//////////////////////////////////
 // Open a connection on page load
 ///////////////////////////////////
 
 var socket = io.connect('http://'+window.location.host.split(':')[0]);
 
-///////////////////////////
-// Start with paperjs
-//////////////////////////
-paper.install(window);
 var moveme;
 
 window.onload = function() {
-  // Setup directly from canvas id:
-  paper.setup('myCanvas');
-  var myCircle = new Path.Circle(new Point(100, 70), 50);
-  myCircle.fillColor = 'black';
-  myCircle.position = view.center;
-  moveme = myCircle;
-}
 
+
+}
 //setInterval(consume,400);
 
 ///////////////////////////////////
@@ -36,9 +27,16 @@ socket.on('new_tweet', function (data) {
 
 socket.on('new_data', function (data) {
   console.log(data);
-  geolocate(data);
+  centerMap(data);
 });
 
+//////////////////////////////////
+// Draw map initially
+//////////////////////////////////
+function centerMap(point){
+  projection.center(point)
+  svg.selectAll("path").attr("d", path);
+}
 
 //////////////////////////////////
 // How to add a new box with image
@@ -78,13 +76,3 @@ function consume(){
   socket.emit('consume');
 }
 
-///////////////////////////////////
-// Handle the coordinates
-//////////////////////////////////
-
-function geolocate(points){
-  x = Maths.abs(points[0] * 25);
-  y = Maths.abs(points[1] * 1); 
-	
-  moveme.position = new Point(x,y);
-}

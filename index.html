@@ -5,26 +5,52 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
-		<script src="paper.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+
 		<script src="client.js"></script>
     <style>
-      body {
-      }
-      #line div { 
-                  float: left; 
-      }
-      #square {
-            width: 60px;
-            height: 60px;
-            background-color: white;
-        
-        }
+   path {
+       stroke: white;
+                 stroke-width: 0.25px;
+                   fill: grey;
+   }
     </style>
 </head><body lang="en">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script>
 
-    <canvas id="myCanvas" resize></canvas>
-    
-    <div id="counter">0</div>  
+  /////////////////////////////////
+  //Draw the initial map
+  ////////////////////////////////
+  var width = 960,
+      height = 600;
+
+  var projection = d3.geo.mercator()
+      //Center in Santa Cruz: 36.9720° N, 122.0263° W
+      .center([-122.0263, 36.9720 ])
+      .scale(2000)
+
+  var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  var path = d3.geo.path()
+    .projection(projection);
+
+  var g = svg.append("g");
+
+
+  d3.json("world-110m2.json", function(error, world) {
+    svg.append("path")
+      .datum(topojson.feature(world, world.objects.land))
+      .attr("class", "land")
+      .attr("d", path);
+  });
+
+</script>
+    <div id="counter"></div>  
     <div id="tweet"></div>
 		<div id="line" style="position:absolute;left:0;right:0;">
     </div>

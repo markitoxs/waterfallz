@@ -115,9 +115,9 @@
     //twit.stream('statuses/filter', { 'locations':'-122.07,36.9420,-121.91,37.05'}, function(s) {
     //Santa Cruz geobox  -122.07,36.9420,-121.91,37.05 
     // The whole world
-    //twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
+    twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
     //California
-    twit.stream('statuses/filter', { 'locations':'-124.148941,30.902225,-115.62355,41.95132'}, function(s) {
+    //twit.stream('statuses/filter', { 'locations':'-124.148941,30.902225,-115.62355,41.95132'}, function(s) {
       stream = s;
       stream.on('data', function (data) {
         // Check if data.user is not undefined

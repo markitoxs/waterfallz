@@ -5,11 +5,61 @@
 var socket = io.connect('http://'+window.location.host.split(':')[0]);
 
 var moveme;
+var centered;
+var projection;
+var svg;
+var path;
+var g;
+var width;
+var height;
 
 window.onload = function() {
 
+  /////////////////////////////////
+  //Draw the initial map
+  ////////////////////////////////
+  var viewportWidth  = document.documentElement.clientWidth,
+      viewportHeight = document.documentElement.clientHeight;
+          
+  width = viewportWidth,
+    height = viewportHeight;
 
+  projection = d3.geo.mercator()
+  //Center in Santa Cruz: 36.9720° N, 122.0263° W
+    .center([-122.0263, 36.9720 ])
+    .scale(150);
+
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  path = d3.geo.path()
+    .projection(projection);
+
+  g = svg.append("g");
+
+
+  d3.json("world-110m2.json", function(error, world) {
+    svg.append("path")
+      .datum(topojson.feature(world, world.objects.land))
+      .attr("class", "land")
+      .attr("d", path);
+  });
+  ///////////////////////////
+  // Draw a circle
+  ///////////////////////////
+
+  var circle = svg.append("circle")
+                  .attr("cx", 30)
+                  .attr("cy", 30)
+                  .attr("r",20)
+                  .attr("fill","red");
 }
+
+window.onresize = function(event) {
+}
+
+
 //setInterval(consume,400);
 
 ///////////////////////////////////
@@ -27,6 +77,15 @@ socket.on('new_tweet', function (data) {
 
 socket.on('new_data', function (data) {
   console.log(data);
+  var x_value = d3.scale.linear()
+    .domain([0, width])
+    .range([-180, 180]);
+
+  var y_value = d3.scale.linear()
+    .domain([0, height])
+    .range([90, -90]);
+
+  console.log(x_value(data[0]));
   centerMap(data);
 });
 
@@ -34,6 +93,7 @@ socket.on('new_data', function (data) {
 // Draw map initially
 //////////////////////////////////
 function centerMap(point){
+
   projection.center(point)
   svg.selectAll("path").attr("d", path);
 }

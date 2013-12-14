@@ -13,43 +13,12 @@
    path {
        stroke: white;
                  stroke-width: 0.25px;
-                   fill: grey;
+                   fill: black;
    }
     </style>
 </head><body lang="en">
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
-<script>
-
-  /////////////////////////////////
-  //Draw the initial map
-  ////////////////////////////////
-  var width = 960,
-      height = 600;
-
-  var projection = d3.geo.mercator()
-      //Center in Santa Cruz: 36.9720° N, 122.0263° W
-      .center([-122.0263, 36.9720 ])
-      .scale(2000)
-
-  var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-  var path = d3.geo.path()
-    .projection(projection);
-
-  var g = svg.append("g");
-
-
-  d3.json("world-110m2.json", function(error, world) {
-    svg.append("path")
-      .datum(topojson.feature(world, world.objects.land))
-      .attr("class", "land")
-      .attr("d", path);
-  });
-
-</script>
     <div id="counter"></div>  
     <div id="tweet"></div>
 		<div id="line" style="position:absolute;left:0;right:0;">

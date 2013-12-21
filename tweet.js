@@ -123,7 +123,7 @@
         // Check if data.user is not undefined
         if ( data.coordinates != null ) {
           buffer.push(data.coordinates.coordinates);
-          console.log(data.coordinates.coordinates);
+   //       console.log(data.coordinates.coordinates);
 					io.sockets.emit('new_data', data.coordinates.coordinates);
         //console.log(buffer.length);
         }

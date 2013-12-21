@@ -20,40 +20,36 @@ window.onload = function() {
   ////////////////////////////////
   var viewportWidth  = document.documentElement.clientWidth,
       viewportHeight = document.documentElement.clientHeight;
-          
-  width = viewportWidth,
-    height = viewportHeight;
 
-  projection = d3.geo.mercator()
-  //Center in Santa Cruz: 36.9720° N, 122.0263° W
-    .center([-122.0263, 36.9720 ])
-    .scale(150);
+  width = viewportWidth,
+        height = viewportHeight;
+
+
+  projection = d3.geo.mercator();
 
   svg = d3.select("body").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("class", "svg-map");
 
   path = d3.geo.path()
     .projection(projection);
 
   g = svg.append("g");
-
-
-  d3.json("world-110m2.json", function(error, world) {
-    svg.append("path")
-      .datum(topojson.feature(world, world.objects.land))
-      .attr("class", "land")
+  d3.json("world-110m.json", function(error, topology) {
+      svg.append("path")
+      .datum(topojson.feature(topology, topology.objects.countries))
       .attr("d", path);
-  });
-  ///////////////////////////
-  // Draw a circle
-  ///////////////////////////
 
-  var circle = svg.append("circle")
-                  .attr("cx", 30)
-                  .attr("cy", 30)
-                  .attr("r",20)
-                  .attr("fill","red");
+      var coordinates = projection([-122.0263,36.9720])
+      svg.append('svg:circle')
+      .attr('cx', coordinates[0])
+      .attr('cy', coordinates[1])
+      .attr("fill","green")
+      .attr('r', 5);
+      });
+
+
 }
 
 window.onresize = function(event) {
@@ -76,17 +72,14 @@ socket.on('new_tweet', function (data) {
 ///////////////////////////////////
 
 socket.on('new_data', function (data) {
-  console.log(data);
-  var x_value = d3.scale.linear()
-    .domain([0, width])
-    .range([-180, 180]);
+    console.log(data);
+    var coordinates = projection([data[0],data[1]])
+    svg.append('svg:circle')
+    .attr('cx', coordinates[0])
+    .attr('cy', coordinates[1])
+    .attr("fill","red")
+    .attr('r', 2); 
 
-  var y_value = d3.scale.linear()
-    .domain([0, height])
-    .range([90, -90]);
-
-  console.log(x_value(data[0]));
-  centerMap(data);
 });
 
 //////////////////////////////////
@@ -96,6 +89,14 @@ function centerMap(point){
 
   projection.center(point)
   svg.selectAll("path").attr("d", path);
+}
+
+
+//////////////////////////////////
+// Move point
+//////////////////////////////////
+function movePoint(point){
+
 }
 
 //////////////////////////////////

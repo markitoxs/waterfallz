@@ -123,8 +123,10 @@
         // Check if data.user is not undefined
         if ( data.coordinates != null ) {
           buffer.push(data.coordinates.coordinates);
-   //       console.log(data.coordinates.coordinates);
-					io.sockets.emit('new_data', data.coordinates.coordinates);
+          if ( !data.coordinates.coordinates[0] == 0  && !data.coordinates.coordinates[1] == 0) { 
+            
+          //console.log(data.coordinates.coordinates[0]);
+					io.sockets.emit('new_data', data.coordinates.coordinates); }
         //console.log(buffer.length);
         }
       }); 

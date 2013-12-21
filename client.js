@@ -24,10 +24,10 @@ window.onload = function() {
   width = viewportWidth,
         height = viewportHeight;
 
-  witdh = 900 ;
-  height = 500;
-  projection = d3.geo.mercator();
-
+  projection = d3.geo.mercator()
+    .center([-30,50])
+    .scale(250);
+  //projection = d3.geo.orthographic();
   svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)

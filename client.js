@@ -24,7 +24,8 @@ window.onload = function() {
   width = viewportWidth,
         height = viewportHeight;
 
-
+  witdh = 900 ;
+  height = 500;
   projection = d3.geo.mercator();
 
   svg = d3.select("body").append("svg")
@@ -72,30 +73,36 @@ socket.on('new_tweet', function (data) {
 ///////////////////////////////////
 
 socket.on('new_data', function (data) {
-    console.log(data);
-    var coordinates = projection([data[0],data[1]])
-    svg.append('svg:circle')
-    .attr('cx', coordinates[0])
-    .attr('cy', coordinates[1])
-    .attr("fill","red")
-    .attr('r', 2); 
+
+    addPoint(data);
 
 });
 
-//////////////////////////////////
-// Draw map initially
-//////////////////////////////////
-function centerMap(point){
-
-  projection.center(point)
-  svg.selectAll("path").attr("d", path);
-}
 
 
 //////////////////////////////////
 // Move point
 //////////////////////////////////
-function movePoint(point){
+function addPoint(point){
+  //draw circle
+  var coordinates = projection([point[0],point[1]])
+    svg.append('svg:circle')
+    .attr('cx', coordinates[0])
+    .attr('cy',coordinates[1])
+    .attr("fill","white")
+    .attr('r',1)
+    .transition()
+    .duration(5050)   
+    .attr("fill","#A4E03D")
+    .attr('r', 10) 
+    .each("end",function() { 
+        d3.select(this).       // so far, as above
+        transition()
+        .duration(3000)
+        .attr('r',0)
+        .attr("fill","white")
+        .each("end",function(){ d3.select(this).remove();})
+        }); 
 
 }
 

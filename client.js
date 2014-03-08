@@ -144,3 +144,13 @@ function consume(){
   socket.emit('consume');
 }
 
+
+///////////////////////////////////////
+// Get form value
+//////////////////////////////////////
+function getRegion()
+{
+  var mylist=document.getElementById("myList");
+  document.getElementById("favorite").value=mylist.options[mylist.selectedIndex].text;
+}
+

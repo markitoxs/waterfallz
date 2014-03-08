@@ -21,6 +21,18 @@
 <script src="http://d3js.org/topojson.v1.min.js"></script>
     <div id="counter"></div>  
     <div id="tweet"></div>
+    <div id="region_selector">
+      <form>
+      Region:
+      <select id="myList" onchange="getRegion()">
+      <option></option>
+      <option>California</option>
+      <option>TheWorld</option>  
+      </select>
+      <p>Region is: <input type="text" id="favorite" size="20"></p>
+      </form>
+    </div>
+
 		<div id="line" style="position:absolute;left:0;right:0;">
     </div>
 </body></html>

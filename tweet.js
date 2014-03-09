@@ -33,6 +33,17 @@
     res.sendfile(__dirname + '/us-states.json');
   });
 
+
+  app.get('/jquery.tipsy.js', function (req, res) {
+    res.sendfile(__dirname + '/jquery.tipsy.js');
+  });
+
+  app.get('/tipsy.css', function (req, res) {
+    res.sendfile(__dirname + '/tipsy.css');
+  });
+
+
+
   app.get('/project', function (req, res) {
     res.sendfile(__dirname + '/project.html');
   });

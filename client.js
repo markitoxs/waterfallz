@@ -12,15 +12,22 @@ var path;
 var g;
 var width;
 var height;
-
+var tooltip;
 window.onload = function() {
 
-  /////////////////////////////////
+  tooltip = d3.select("body")
+      .append("div")
+        .style("position", "absolute")
+          .style("z-index", "10")
+            .style("visibility", "hidden")
+              .text("a simple tooltip")
+              
+  ////////////////////////////////
   //Draw the initial map
   ////////////////////////////////
   var viewportWidth  = document.documentElement.clientWidth,
       viewportHeight = document.documentElement.clientHeight;
-
+  
   width = viewportWidth;
   height = viewportHeight;
   
@@ -171,6 +178,21 @@ function addPoint(point,text){
     .attr('cy',coordinates[1])
     .attr("fill","white")
     .attr('r',1)
+    .on("mouseover", function(){
+       //Get twitter text
+       tooltip.text(text);
+       console.log(tooltip.text())
+       tooltip.style("visibility", "visible");
+       })
+      
+    .on("mousemove", function(){
+       console.log(event.pageX+":"+event.pageY)
+       tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+       })
+    .on("mouseout", function(){
+       console.log(event.pageX+":"+event.pageY)
+        tooltip.style("visibility", "hidden");
+        })
     .transition()
       .duration(5050)   
       .attr("fill","#A4E03D")
@@ -185,6 +207,11 @@ function addPoint(point,text){
           }); 
 
 
+}
+//////////////////////////////////
+// Add text
+//////////////////////////////////
+function displayTweet(text,coordinates){
   //Add the text with the box
   var text = svg.append("svg:text")
     .attr("x", coordinates[0])
@@ -192,8 +219,15 @@ function addPoint(point,text){
     .attr("dy", ".35em")
     .attr("text-anchor", "middle")
     .style("font", "300 14px Helvetica Neue")
-    .text(text);
-
+    .text(text)
+    .transition()
+      .duration(5050)
+      .each("end",function(){
+          d3.select(this).
+          transition()
+          .duration(100)
+          .each("end",function(){ d3.select(this).remove();})
+            });
   var bbox = text.node().getBBox();
 
   var rect = svg.append("svg:rect")
@@ -204,10 +238,16 @@ function addPoint(point,text){
     .style("fill", "white")
     .style("fill-opacity", ".3")
     .style("stroke", "black")
-    .style("stroke-width", "1.5px");
-
+    .style("stroke-width", "1.5px")
+    .transition()
+      .duration(5050)
+      .each("end",function(){
+          d3.select(this).
+          transition()
+          .duration(100)
+          .each("end",function(){ d3.select(this).remove();})
+            });
 }
-
 //////////////////////////////////
 // How to add a new box with image
 //////////////////////////////////

@@ -16,11 +16,12 @@ var tooltip;
 window.onload = function() {
 
   tooltip = d3.select("body")
-      .append("div")
-        .style("position", "absolute")
-          .style("z-index", "10")
-            .style("visibility", "hidden")
-              .text("a simple tooltip")
+    .append('div')
+    .attr("class", "tool")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .text("a simple tooltip")
               
   ////////////////////////////////
   //Draw the initial map

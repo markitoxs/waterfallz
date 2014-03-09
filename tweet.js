@@ -85,6 +85,17 @@
 			}
     });
 
+    //On change_region, will make a new request
+    socket.on('change_region', function (newRegion) {
+      //First thing to do is to destroy the stream.
+      console.log("Change of region to"+newRegion+" requested");
+      stream.destroy();
+      //Second thing is to start fetching, with the new region
+      console.log("Attempting to restart stream");
+      fetch_tweets(io,newRegion); 
+    });
+    
+    
     //On consume will consume the array
     socket.on('consume', function () {
       //console.log("Received Request for image");
@@ -97,7 +108,8 @@
   // and adds the value to the array
   //////////////////////////////////////////
 
-  function fetch_tweets(io) {
+  function fetch_tweets(io,region) {
+    console.log("FETCHING for "+region+":");
     var twitter = require('ntwitter');
     var config  = require('./config.json');
     var twit = new twitter({
@@ -107,17 +119,25 @@
       access_token_secret: config.access_token_secret
     }); 
 
-    //Filter by region 
-    // Edinburgh
-    // twit.stream('statuses/filter', { 'locations':'-3.414001,55.882629,-3.017120,56.002605'}, function(s) {
-   
-    // Santa Cruz
-    //twit.stream('statuses/filter', { 'locations':'-122.07,36.9420,-121.91,37.05'}, function(s) {
-    //Santa Cruz geobox  -122.07,36.9420,-121.91,37.05 
-    // The whole world
-    twit.stream('statuses/filter', { 'locations':'-180,-90,180,90'}, function(s) {
-    //California
-    //twit.stream('statuses/filter', { 'locations':'-124.148941,30.902225,-115.62355,41.95132'}, function(s) {
+    switch (region) { 
+      case "TheWorld":
+        coordinates='-180,-90,180,90';
+        break;
+      case "US":
+        coordinates='-129.199219,24.647017,-51.218262,48.821333';
+        break; 
+      case "California":
+        coordinates='-124.148941,30.902225,-115.62355,41.95132';
+        break;
+      case "SantaCruz":
+        coordinates='-122.07,36.9420,-121.91,37.05';
+        break;
+      default:
+        coordinates='-180,-90,180,90';
+        break;
+    }
+
+    twit.stream('statuses/filter', { 'locations':coordinates}, function(s) {
       stream = s;
       stream.on('data', function (data) {
         // Check if data.user is not undefined
@@ -126,7 +146,7 @@
           if ( !data.coordinates.coordinates[0] == 0  && !data.coordinates.coordinates[1] == 0) { 
             
           //console.log(data.coordinates.coordinates[0]);
-					io.sockets.emit('new_data', data.coordinates.coordinates); }
+					io.sockets.emit('new_data', data.coordinates.coordinates, data.text); }
         //console.log(buffer.length);
         }
       }); 

@@ -21,33 +21,28 @@ window.onload = function() {
   var viewportWidth  = document.documentElement.clientWidth,
       viewportHeight = document.documentElement.clientHeight;
 
-  width = viewportWidth,
-        height = viewportHeight;
+  width = viewportWidth;
+  height = viewportHeight;
+  
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg-map");
+
 
   projection = d3.geo.mercator()
     .center([-30,50])
     .scale(250);
-  //projection = d3.geo.orthographic();
-  svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("class", "svg-map");
 
   path = d3.geo.path()
     .projection(projection);
 
   g = svg.append("g");
+  
   d3.json("world-110m.json", function(error, topology) {
       svg.append("path")
       .datum(topojson.feature(topology, topology.objects.countries))
       .attr("d", path);
-
-      var coordinates = projection([-122.0263,36.9720])
-      svg.append('svg:circle')
-      .attr('cx', coordinates[0])
-      .attr('cy', coordinates[1])
-      .attr("fill","green")
-      .attr('r', 5);
       });
 
 
@@ -72,18 +67,103 @@ socket.on('new_tweet', function (data) {
 // What to do on new_data
 ///////////////////////////////////
 
-socket.on('new_data', function (data) {
-
-    addPoint(data);
+socket.on('new_data', function (coordinates,text) {
+    addPoint(coordinates,text);
 
 });
 
+
+//////////////////////////////////
+// Draw world map
+//////////////////////////////////
+function centerWorld() {
+  // delete map
+  d3.select("svg")
+    .remove();
+
+  var viewportWidth  = document.documentElement.clientWidth,
+      viewportHeight = document.documentElement.clientHeight;
+
+  width = viewportWidth;
+  height = viewportHeight;
+
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg-map");
+
+
+  projection = d3.geo.mercator()
+    .center([-30,50])
+    .scale(250);
+
+  path = d3.geo.path()
+    .projection(projection);
+
+  g = svg.append("g");
+
+  d3.json("world-110m.json", function(error, topology) {
+      svg.append("path")
+      .datum(topojson.feature(topology, topology.objects.countries))
+      .attr("d", path);
+      }); 
+
+
+
+}
+
+
+
+//////////////////////////////////
+// Change Map center to the US
+//////////////////////////////////
+//Middle of the US: -100,40`
+function centerUS() {
+
+ // delete map
+  d3.select("svg")
+           .remove();
+
+  var viewportWidth  = document.documentElement.clientWidth,
+      viewportHeight = document.documentElement.clientHeight;
+
+  width = viewportWidth;
+  height = viewportHeight;
+
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg-map");
+
+
+  projection = d3.geo.conicConformal()
+    .rotate([98, 0])
+    .center([0, 38])
+    .parallels([29.5, 45.5])
+    .scale(1000)
+    .translate([width / 2, height / 2])
+    .precision(.1);
+
+  path = d3.geo.path()
+    .projection(projection);
+
+  g = svg.append("g");
+
+  d3.json("world-110m.json", function(error, topology) {
+      svg.append("path")
+      .datum(topojson.feature(topology, topology.objects.countries))
+      .attr("d", path);
+      }); 
+
+
+
+}
 
 
 //////////////////////////////////
 // Move point
 //////////////////////////////////
-function addPoint(point){
+function addPoint(point,text){
   //draw circle
   var coordinates = projection([point[0],point[1]])
     svg.append('svg:circle')
@@ -92,17 +172,39 @@ function addPoint(point){
     .attr("fill","white")
     .attr('r',1)
     .transition()
-    .duration(5050)   
-    .attr("fill","#A4E03D")
-    .attr('r', 10) 
-    .each("end",function() { 
-        d3.select(this).       // so far, as above
-        transition()
-        .duration(3000)
-        .attr('r',0)
-        .attr("fill","white")
-        .each("end",function(){ d3.select(this).remove();})
-        }); 
+      .duration(5050)   
+      .attr("fill","#A4E03D")
+      .attr('r', 10) 
+      .each("end",function() {
+          d3.select(this).       // so far, as above
+          transition()
+          .duration(3000)
+          .attr('r',0)
+          .attr("fill","white")
+          .each("end",function(){ d3.select(this).remove();})
+          }); 
+
+
+  //Add the text with the box
+  var text = svg.append("svg:text")
+    .attr("x", coordinates[0])
+    .attr("y", coordinates[1]-10)
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .style("font", "300 14px Helvetica Neue")
+    .text(text);
+
+  var bbox = text.node().getBBox();
+
+  var rect = svg.append("svg:rect")
+    .attr("x", bbox.x)
+    .attr("y", bbox.y)
+    .attr("width", bbox.width)
+    .attr("height", bbox.height)
+    .style("fill", "white")
+    .style("fill-opacity", ".3")
+    .style("stroke", "black")
+    .style("stroke-width", "1.5px");
 
 }
 
@@ -151,6 +253,16 @@ function consume(){
 function getRegion()
 {
   var mylist=document.getElementById("myList");
-  document.getElementById("favorite").value=mylist.options[mylist.selectedIndex].text;
+  region=mylist.options[mylist.selectedIndex].text;
+  console.log("Region is: "+region);
+  socket.emit('change_region',region);
+  switch (region) {
+    case "US":
+      centerUS();
+      break;
+    default:
+      centerWorld();
+      break;
+  }
 }
 

@@ -13,6 +13,19 @@ var g;
 var width;
 var height;
 var tooltip;
+var pointCount;
+
+////////////////////////////////////////////
+//Create the projection like so: 
+//
+//var projection = d3.geo.albers() 
+//.translate([width / 2, height / 2]) 
+//.scale(scale) 
+////.rotate([-longitude, 0]) 
+//.center([0, latitude]); 
+//////////////////////////////////////
+
+
 window.onload = function() {
 
   tooltip = d3.select("body")
@@ -26,33 +39,7 @@ window.onload = function() {
   ////////////////////////////////
   //Draw the initial map
   ////////////////////////////////
-  var viewportWidth  = document.documentElement.clientWidth,
-      viewportHeight = document.documentElement.clientHeight;
-  
-  width = viewportWidth;
-  height = viewportHeight;
-  
-  svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("id", "svg-map");
-
-
-  projection = d3.geo.mercator()
-    .center([-30,50])
-    .scale(250);
-
-  path = d3.geo.path()
-    .projection(projection);
-
-  g = svg.append("g");
-  
-  d3.json("world-110m.json", function(error, topology) {
-      svg.append("path")
-      .datum(topojson.feature(topology, topology.objects.countries))
-      .attr("d", path);
-      });
-
+  centerWorld();
 
 }
 
@@ -75,9 +62,8 @@ socket.on('new_tweet', function (data) {
 // What to do on new_data
 ///////////////////////////////////
 
-socket.on('new_data', function (coordinates,text) {
-    addPoint(coordinates,text);
-
+socket.on('new_data', function (coordinates,text,color) {
+    addPoint(coordinates,text,color);
 });
 
 
@@ -123,6 +109,7 @@ function centerWorld() {
 
 
 //////////////////////////////////
+//////////////////////////////////
 // Change Map center to the US
 //////////////////////////////////
 //Middle of the US: -100,40`
@@ -166,14 +153,156 @@ function centerUS() {
 
 
 }
+//////////////////////////////////////////
+// Change Map center to California
+//////////////////////////////////
+//Middle of the Cali
+function centerCalifornia() {
 
+ // delete map
+  d3.select("svg")
+           .remove();
+
+  var viewportWidth  = document.documentElement.clientWidth,
+      viewportHeight = document.documentElement.clientHeight;
+
+  width = viewportWidth;
+  height = viewportHeight;
+
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg-map");
+
+  projection = d3.geo.albers() 
+    .translate([width/2,height/2]) 
+    .scale(2900) 
+    .rotate([122.4183, 0]) 
+    .center([0, 37.7750]); 
+
+  path = d3.geo.path()
+    .projection(projection);
+
+  g = svg.append("g");
+
+  d3.json("world-110m.json", function(error, topology) {
+      svg.append("path")
+      .datum(topojson.feature(topology, topology.objects.countries))
+      .attr("d", path);
+      }); 
+
+
+
+}
+
+
+//////////////////////////////////////////
+// Change Map center to SantaCruz
+//////////////////////////////////
+//Middle of SCZ
+function centerSantaCruz() {
+console.log("SANTA CRUZ");
+ // delete map
+  d3.select("svg")
+           .remove();
+
+  var viewportWidth  = document.documentElement.clientWidth,
+      viewportHeight = document.documentElement.clientHeight;
+
+  width = viewportWidth;
+  height = viewportHeight;
+
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg-map");
+
+  projection = d3.geo.albers() 
+    .translate([width/2,height/2])
+    .scale(7500) 
+    .rotate([121.905885, 0]) 
+    .center([0,36.949892]); 
+
+  path = d3.geo.path()
+    .projection(projection);
+
+  g = svg.append("g");
+
+  d3.json("world-110m.json", function(error, topology) {
+      svg.append("path")
+      .datum(topojson.feature(topology, topology.objects.countries))
+      .attr("d", path);
+      }); 
+
+
+
+}
+
+//////////////////////////////////////////
+// Change Map center to Spain
+//////////////////////////////////
+//Middle of Spain
+function centerSpain() {
+console.log("Spain");
+ // delete map
+  d3.select("svg")
+           .remove();
+
+  var viewportWidth  = document.documentElement.clientWidth,
+      viewportHeight = document.documentElement.clientHeight;
+
+  width = viewportWidth;
+  height = viewportHeight;
+
+  svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg-map");
+
+  projection = d3.geo.albers() 
+    .translate([width/2,height/2])
+    .scale(3500)
+    .rotate([-3.6833, 0]) 
+    .center([0,40.4000]); 
+
+  path = d3.geo.path()
+    .projection(projection);
+
+  g = svg.append("g");
+
+  d3.json("world-110m.json", function(error, topology) {
+      svg.append("path")
+      .datum(topojson.feature(topology, topology.objects.countries))
+      .attr("d", path);
+      }); 
+
+
+
+}
 
 //////////////////////////////////
 // Move point
 //////////////////////////////////
-function addPoint(point,text){
+function addPoint(point,text,color){
+  if ( color == "red") {
+    circleColor="#FF0000";
+  }
+  else {
+    circleColor="#A4E03D";
+  }
   //draw circle
   var coordinates = projection([point[0],point[1]])
+    // If tweet number 10, then add tooltip anyways
+    if ( pointCount == 10 )
+    {
+     pointCount=0;
+     tooltip.text(text);
+     //move it to where the point is
+    
+    }
+    else {
+      pointCount = pointCount+1;
+    }
     svg.append('svg:circle')
     .attr('cx', coordinates[0])
     .attr('cy',coordinates[1])
@@ -182,21 +311,18 @@ function addPoint(point,text){
     .on("mouseover", function(){
        //Get twitter text
        tooltip.text(text);
-       console.log(tooltip.text())
        tooltip.style("visibility", "visible");
        })
       
     .on("mousemove", function(){
-       console.log(event.pageX+":"+event.pageY)
        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
        })
     .on("mouseout", function(){
-       console.log(event.pageX+":"+event.pageY)
         tooltip.style("visibility", "hidden");
         })
     .transition()
       .duration(5050)   
-      .attr("fill","#A4E03D")
+      .attr("fill",circleColor)
       .attr('r', 10) 
       .each("end",function() {
           d3.select(this).       // so far, as above
@@ -300,6 +426,15 @@ function getRegion()
   switch (region) {
     case "US":
       centerUS();
+      break;
+    case "California":
+      centerCalifornia();
+      break;
+    case "SantaCruz":
+      centerSantaCruz();
+      break;
+    case "Spain":
+      centerSpain();
       break;
     default:
       centerWorld();

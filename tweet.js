@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
   var buffer = new Array();
 
@@ -130,6 +130,8 @@
       access_token_secret: config.access_token_secret
     }); 
 
+
+    //Coordinates are from bottom left to top right in lon,lat
     switch (region) { 
       case "TheWorld":
         coordinates='-180,-90,180,90';
@@ -143,21 +145,32 @@
       case "SantaCruz":
         coordinates='-122.07,36.9420,-121.91,37.05';
         break;
+      case "Spain":
+        coordinates='-10.580692,35.946883,3.976192,43.421009';
+        break;
       default:
         coordinates='-180,-90,180,90';
         break;
     }
 
+    corners=coordinates.split(",");
     twit.stream('statuses/filter', { 'locations':coordinates}, function(s) {
       stream = s;
       stream.on('data', function (data) {
         // Check if data.user is not undefined
+        //console.log(data);
         if ( data.coordinates != null ) {
           buffer.push(data.coordinates.coordinates);
           if ( !data.coordinates.coordinates[0] == 0  && !data.coordinates.coordinates[1] == 0) { 
-            
-          //console.log(data.coordinates.coordinates[0]);
-					io.sockets.emit('new_data', data.coordinates.coordinates, data.text); }
+        //Making sure coordinates are withing boundary box    
+       if ( data.coordinates.coordinates[0] < corners[0] || 
+            data.coordinates.coordinates[0] > corners[2] ||
+            data.coordinates.coordinates[1] < corners[1] ||
+            data.coordinates.coordinates[1] > corners[3] ){
+              var color="red"; 
+       }
+        //console.log(data.coordinates.coordinates[0]);
+					io.sockets.emit('new_data', data.coordinates.coordinates, data.text, color); }
         //console.log(buffer.length);
         }
       }); 
